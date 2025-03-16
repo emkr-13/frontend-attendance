@@ -27,19 +27,15 @@ export const useAuthStore = defineStore("auth", {
       }
     },
     async logout() {
-      try {
-        await useApi().post("/api/auth/logout");
-        this.token = null;
-        this.refreshToken = null;
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
+      // Hapus token dari state dan localStorage
+      this.token = null;
+      this.refreshToken = null;
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
 
-        // Redirect ke halaman login
-        const router = useRouter();
-        router.push("/login");
-      } catch (error) {
-        throw error.response.data;
-      }
+      // Redirect ke halaman login
+      const router = useRouter();
+      router.push("/login");
     },
   },
 });
