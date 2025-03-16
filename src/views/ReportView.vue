@@ -4,7 +4,6 @@
     <table v-if="attendances.length > 0">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Location</th>
           <th>IP Address</th>
           <th>Photo</th>
@@ -13,7 +12,6 @@
       </thead>
       <tbody>
         <tr v-for="attendance in attendances" :key="attendance.id">
-          <td>{{ attendance.id }}</td>
           <td>{{ attendance.location }}</td>
           <td>{{ attendance.ipAddress }}</td>
           <td>
