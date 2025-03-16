@@ -27,7 +27,7 @@ const router = useRouter();
 const handleLogin = async () => {
   try {
     await authStore.login(username.value, password.value);
-    router.push("/attendance");
+    router.push("/profile");
   } catch (error) {
     alert("Login failed");
   }

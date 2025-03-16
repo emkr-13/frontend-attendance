@@ -34,7 +34,7 @@ const fetchProfile = async () => {
 
 const updateProfile = async () => {
   try {
-    await api.put("/api/users/update", {
+    await api.post("/api/users/update", {
       fullName: fullName.value,
       position: position.value,
     });

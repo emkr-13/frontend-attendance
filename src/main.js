@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import { createPinia } from 'pinia';
+import { createPinia } from 'pinia'; // Impor createPinia dari Pinia
 
 // Inisialisasi Pinia store
 const pinia = createPinia();
