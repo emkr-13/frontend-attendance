@@ -17,7 +17,7 @@ export const useUserStore = defineStore('user', {
     },
     async updateProfile(profileData) {
       try {
-        const response = await useApi().put('/api/users/update', profileData)
+        const response = await useApi().post('/api/users/update', profileData)
         this.profile = response.data.data
         return response.data
       } catch (error) {

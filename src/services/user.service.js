@@ -11,7 +11,7 @@ export const UserService = {
   },
   async updateProfile(profileData) {
     try {
-      const response = await api.put("/api/users/update", profileData);
+      const response = await api.post("/api/users/update", profileData);
       return response.data;
     } catch (error) {
       throw error.response.data;

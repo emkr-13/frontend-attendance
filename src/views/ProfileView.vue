@@ -3,8 +3,6 @@
     <h1>Profile</h1>
     <div v-if="profile">
       <p><strong>Username:</strong> {{ profile.username }}</p>
-      <p><strong>Full Name:</strong> {{ profile.fullName }}</p>
-      <p><strong>Position:</strong> {{ profile.position }}</p>
     </div>
     <form @submit.prevent="handleUpdate">
       <div class="form-group">
