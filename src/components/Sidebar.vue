@@ -1,46 +1,58 @@
 <template>
-  <div class="sidebar">
-    <h3>Menu</h3>
-    <ul>
-      <li><router-link to="/attendance">Attendance</router-link></li>
-      <li><router-link to="/profile">Profile</router-link></li>
-    </ul>
-  </div>
+  <aside class="sidebar">
+    <nav>
+      <ul>
+        <li>
+          <router-link to="/dashboard">Dashboard</router-link>
+        </li>
+        <li>
+          <router-link to="/attendance">Attendance</router-link>
+        </li>
+        <li>
+          <router-link to="/profile">Profile</router-link>
+        </li>
+        <li>
+          <router-link to="/report">Report</router-link>
+        </li>
+      </ul>
+    </nav>
+  </aside>
 </template>
 
 <script setup>
-// Tidak ada logika khusus di sini
+// Tidak perlu logika khusus di sini
 </script>
 
 <style scoped>
 .sidebar {
-  width: 200px;
-  background-color: #f4f4f4;
+  width: 250px;
+  background-color: #34495e;
+  color: white;
   padding: 20px;
-  height: 100vh;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar h3 {
-  margin-bottom: 20px;
-}
-
-.sidebar ul {
+.sidebar nav ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
-.sidebar li {
-  margin-bottom: 10px;
+.sidebar nav ul li {
+  margin-bottom: 15px;
 }
 
-.sidebar a {
+.sidebar nav ul li a {
+  color: white;
   text-decoration: none;
-  color: #333;
-  font-weight: bold;
+  font-size: 18px;
 }
 
-.sidebar a.router-link-active {
-  color: #007bff;
+.sidebar nav ul li a:hover {
+  color: #1abc9c;
+}
+
+.router-link-active {
+  color: #1abc9c;
+  font-weight: bold;
 }
 </style>

@@ -1,48 +1,56 @@
 <template>
   <div class="profile-container">
-    <h2>Edit Profile</h2>
-    <form @submit.prevent="updateProfile">
-      <input v-model="fullName" placeholder="Full Name" required />
-      <input v-model="position" placeholder="Position" required />
-      <button type="submit">Save Profile</button>
+    <h1>Profile</h1>
+    <div v-if="profile">
+      <p><strong>Username:</strong> {{ profile.username }}</p>
+      <p><strong>Full Name:</strong> {{ profile.fullName }}</p>
+      <p><strong>Position:</strong> {{ profile.position }}</p>
+    </div>
+    <form @submit.prevent="handleUpdate">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input v-model="fullName" type="text" id="fullName" required />
+      </div>
+      <div class="form-group">
+        <label for="position">Position</label>
+        <input v-model="position" type="text" id="position" required />
+      </div>
+      <button type="submit">Update Profile</button>
     </form>
+    <p v-if="error" class="error-message">{{ error }}</p>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import api from "../services/api";
-import { useAuthStore } from "../stores/auth";
+import { useUserStore } from "../stores/user.store";
 
+const profile = ref(null);
 const fullName = ref("");
 const position = ref("");
-const authStore = useAuthStore();
+const error = ref("");
+const userStore = useUserStore();
 
-onMounted(() => {
-  fetchProfile();
+onMounted(async () => {
+  try {
+    const response = await userStore.fetchProfile();
+    profile.value = response.data;
+    fullName.value = profile.value.fullName;
+    position.value = profile.value.position;
+  } catch (err) {
+    error.value = "Failed to fetch profile.";
+  }
 });
 
-const fetchProfile = async () => {
+const handleUpdate = async () => {
   try {
-    const response = await api.get("/api/users/profile");
-    fullName.value = response.data.data.fullName;
-    position.value = response.data.data.position;
-  } catch (error) {
-    alert("Failed to fetch profile");
-  }
-};
-
-const updateProfile = async () => {
-  try {
-    await api.post("/api/users/update", {
+    await userStore.updateProfile({
       fullName: fullName.value,
       position: position.value,
     });
-    authStore.user.fullName = fullName.value;
-    authStore.user.position = position.value;
-    alert("Profile updated successfully");
-  } catch (error) {
-    alert("Failed to update profile");
+    alert("Profile updated successfully!");
+  } catch (err) {
+    error.value = "Failed to update profile.";
   }
 };
 </script>
@@ -50,37 +58,45 @@ const updateProfile = async () => {
 <style scoped>
 .profile-container {
   max-width: 400px;
-  margin: 50px auto;
+  margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.profile-container h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.profile-container input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
 }
 
-.profile-container button {
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
   width: 100%;
   padding: 10px;
-  background-color: #007bff;
+  background-color: #2c3e50;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.profile-container button:hover {
-  background-color: #0056b3;
+button:hover {
+  background-color: #34495e;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
 }
 </style>

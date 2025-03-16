@@ -1,33 +1,37 @@
 <template>
-  <div class="app-container">
-    <Sidebar v-if="authStore.isAuthenticated" />
-    <div class="content">
-      <Navbar v-if="authStore.isAuthenticated" />
-      <router-view />
-    </div>
-  </div>
+  <router-view />
 </template>
 
 <script setup>
-import Sidebar from "./components/Sidebar.vue";
-import Navbar from "./components/Navbar.vue";
-import { useAuthStore } from "./stores/auth";
+import { onMounted } from 'vue'
+import { useAuthStore } from './stores/auth.store'
+import { useRouter } from 'vue-router'
 
-const authStore = useAuthStore();
+const authStore = useAuthStore()
+const router = useRouter()
+
+// Cek token saat aplikasi pertama kali dimuat
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    authStore.token = token
+  } else {
+    router.push('/login') // Redirect ke halaman login jika tidak ada token
+  }
+})
 </script>
 
 <style>
+/* Global styles */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
 }
 
-.app-container {
+#app {
   display: flex;
-}
-
-.content {
-  flex: 1;
-  padding: 20px;
+  flex-direction: column;
+  min-height: 100vh;
 }
 </style>

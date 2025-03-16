@@ -1,17 +1,16 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router';
-import { createPinia } from 'pinia'; // Impor createPinia dari Pinia
-
-// Inisialisasi Pinia store
-const pinia = createPinia();
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import App from './App.vue'
+import router from './router'
 
 // Buat instance Vue
-const app = createApp(App);
+const app = createApp(App)
 
-// Gunakan plugin
-app.use(pinia);
-app.use(router);
+// Gunakan Pinia untuk state management
+app.use(createPinia())
 
-// Mount aplikasi ke DOM
-app.mount('#app');
+// Gunakan Vue Router untuk routing
+app.use(router)
+
+// Mount aplikasi ke elemen dengan id 'app'
+app.mount('#app')

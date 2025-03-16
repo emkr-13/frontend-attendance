@@ -1,42 +1,32 @@
-import axios from "axios";
-import { useAuthStore } from "../stores/auth";
+import axios from 'axios'
+import { useAuthStore } from '../stores/auth.store'
 
-// Buat instance Axios dengan baseURL dari .env
+// Buat instance Axios
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, // Mengambil API URL dari .env
-  timeout: 10000, // Timeout 10 detik
-});
+  baseURL: import.meta.env.VITE_API_URL,
+})
 
-// Interceptor Request: Menambahkan token ke header Authorization
-api.interceptors.request.use(
-  (config) => {
-    const authStore = useAuthStore();
-    if (authStore.refreshToken) {
-      config.headers.Authorization = `Bearer ${authStore.refreshToken}`;
-    }
-    return config;
-  },
-  (error) => {
-    // Handle error pada request
-    return Promise.reject(error);
+// Interceptor untuk menambahkan token ke header
+api.interceptors.request.use((config) => {
+  const authStore = useAuthStore()
+  if (authStore.token) {
+    config.headers.Authorization = `Bearer ${authStore.token}`
   }
-);
+  return config
+})
 
-// Interceptor Response: Handle error global (opsional)
+// Interceptor untuk menangani error response
 api.interceptors.response.use(
-  (response) => {
-    // Jika respons sukses, kembalikan data
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // Handle error global, misalnya jika token expired atau tidak valid
-    if (error.response && error.response.status === 401) {
-      console.error("Unauthorized: Token expired or invalid");
-      const authStore = useAuthStore();
-      authStore.logout(); // Logout pengguna jika token tidak valid
+    if (error.response.status === 401) {
+      // Jika token tidak valid, lakukan logout
+      const authStore = useAuthStore()
+      authStore.logout()
     }
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
-export default api;
+// Ekspor instance Axios sebagai named export
+export const useApi = () => api
