@@ -1,6 +1,16 @@
 <template>
   <div>
     <h1>Attendance Report</h1>
+    <!-- Dropdown untuk memilih timezone -->
+    <div class="filter-container">
+      <label for="timezone">Select Timezone:</label>
+      <select id="timezone" v-model="selectedTimezone">
+        <option v-for="timezone in timezones" :key="timezone" :value="timezone">
+          {{ timezone }}
+        </option>
+      </select>
+    </div>
+    <!-- Tabel attendance -->
     <table v-if="attendances.length > 0">
       <thead>
         <tr>
@@ -8,7 +18,7 @@
           <th>Location</th>
           <th>IP Address</th>
           <th>Photo</th>
-          <th>Created At</th>
+          <th>Created At ({{ selectedTimezone }})</th>
         </tr>
       </thead>
       <tbody>
@@ -23,7 +33,7 @@
               class="photo"
             />
           </td>
-          <td>{{ formatDate(attendance.createdAt) }}</td>
+          <td>{{ formatDate(attendance.createdAt, selectedTimezone) }}</td>
         </tr>
       </tbody>
     </table>
@@ -32,31 +42,50 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useAttendanceStore } from '../stores/attendance.store'
-import { format } from 'date-fns'
+import { ref, onMounted, watch } from "vue";
+import { useAttendanceStore } from "../stores/attendance.store";
+import moment from "moment-timezone"; // Impor moment-timezone
 
-const attendances = ref([])
-const attendanceStore = useAttendanceStore()
+const attendances = ref([]);
+const attendanceStore = useAttendanceStore();
+const selectedTimezone = ref("Asia/Jakarta"); // Timezone default
+const timezones = ref([
+  "Asia/Jakarta", // GMT+7
+  "UTC", // GMT+0
+  "America/New_York", // GMT-4 atau GMT-5 (tergantung daylight saving)
+  "Europe/London", // GMT+0 atau GMT+1 (tergantung daylight saving)
+  // Tambahkan timezone lain sesuai kebutuhan
+]);
 
-onMounted(async () => {
+// Fungsi untuk mengambil data attendance
+const fetchAttendances = async () => {
   try {
-    const response = await attendanceStore.fetchAttendances()
-    attendances.value = response.data
+    const response = await attendanceStore.fetchAttendances();
+    attendances.value = response.data;
   } catch (err) {
-    console.error('Failed to fetch attendances:', err)
+    console.error("Failed to fetch attendances:", err);
   }
-})
+};
 
 // Fungsi untuk membuat URL lengkap ke foto
 const getPhotoUrl = (photoPath) => {
-  return `http://localhost:3080/${photoPath}`
-}
+  return `http://localhost:3080/${photoPath}`;
+};
 
-// Fungsi untuk memformat tanggal
-const formatDate = (dateString) => {
-  return format(new Date(dateString), 'yyyy-MM-dd HH:mm:ss')
-}
+// Fungsi untuk memformat tanggal berdasarkan timezone
+const formatDate = (dateString, timezone) => {
+  return moment(dateString).tz(timezone).format("YYYY-MM-DD HH:mm:ss"); // Konversi dan format tanggal
+};
+
+// Ambil data saat komponen dimount
+onMounted(() => {
+  fetchAttendances();
+});
+
+// Watch perubahan timezone dan refresh tampilan
+watch(selectedTimezone, () => {
+  fetchAttendances();
+});
 </script>
 
 <style scoped>
@@ -74,5 +103,19 @@ th, td {
 .photo {
   max-width: 100px;
   max-height: 100px;
+}
+
+.filter-container {
+  margin-bottom: 20px;
+}
+
+label {
+  margin-right: 10px;
+}
+
+select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 </style>
